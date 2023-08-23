@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product Management</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Product Management</h1>
+  
+  <h2>Add Product</h2>
+  <form id="addProductForm">
+    ProductCode: <input type="text" name="ProductCode"><br>
+    ProductName: <input type="text" name="ProductName"><br>
+    ProductData: <input type="text" name="ProductData"><br>
+    ProductOriginPrice: <input type="text" name="ProductOriginPrice"><br>
+    Quantity: <input type="text" name="Quantity"><br>
+    ProductStoreCode: <input type="text" name="ProductStoreCode"><br>
+    <button type="submit">Add Product</button>
+  </form>
+  
+  <h2>Product List</h2>
+  <ul id="productList">
+   
+  </ul>
+  
+  <script>
+    // Thêm Product
+    $('#addProductForm').submit(function(event) {
+      event.preventDefault();
+      const formData = $(this).serialize();
+      
+      $.post('/api/products', formData, function(data) {
+        alert('Product added successfully.');
+        location.reload();
+      });
+    });
+    
+    // Xóa user
+    $('#productList').on('click', '.delete-button', function() {
+      const productCode = $(this).data('ProductCode');
+      
+      $.ajax({
+        url: `/api/products/${productCode}`,
+        type: 'DELETE',
+        success: function() {
+          alert('Product deleted successfully.');
+          location.reload();
+        }
+      });
+    });
+    
+    // Hiển thị danh sách user
+    $.get('/api/products', function(data) {
+      const productList = $('#productList');
+      
+      data.forEach(function(product) {
+        productList.append(`<li>ProductName : ${product.ProductName} - ProductData : ${product.ProductData} - ProductOriginPrice : ${product.ProductOriginPrice} - Quantity : ${product.Quantity} - ProductStoreCode : ${product.ProductStoreCode}<button class="delete-button" data-productcode="${product.ProductCode}">   Delete   </button></li>`);
+      });
+    });
+  </script>
+</body>
+</html>
